@@ -4,7 +4,7 @@
 
 ## 前提
 - iPhone のみ / iOS 18.0 以上 / 縦固定 / ライトモード固定
-- 未リリース（2026-09-11 時点）
+- 審査提出済み（2026-09-12）。まだ公開前
 - バンドル ID は `com.keisukearai.MyHandMemo` で確定（2026-09-12）。App Store Connect で App を作ると変更できない
   - Capability を一つも使っていないため Xcode の自動署名はワイルドカード App ID（`HFZSU3MJLR.*`）を使う。
     App Store Connect のバンドル ID 一覧には明示的な App ID しか出ないので、開発者ポータルでの登録が別途必要
@@ -32,9 +32,36 @@
   - 日付は環境値 `locale` で書式化する（`Locale.current` を使うと切り替わらない）
   - 共有シートなど iOS が出す部品は端末の言語のまま（この方式の制約）
 
+## テスト
+- UI テストは `MyHandMemoUITests`。`xcodebuild test -scheme MyHandMemo -destination 'platform=iOS Simulator,name=iPhone 17 Pro'`
+  - 実機は `-destination 'platform=iOS,name=arai13' -allowProvisioningUpdates`
+  - テスト中は起動引数 `-uiTesting` で SwiftData をメモリ内にし、毎回空から始める
+- `ShareSaveImageUITests` は写真ライブラリへ実際に書き込む。混ぜたくないときは
+  `-skip-testing:MyHandMemoUITests/ShareSaveImageUITests`
+- シミュレータ・実機の両方で確認済み：指描画・Undo/Redo・全消去からの復元・空メモの非保存・
+  長押しメニュー（固定/複製/削除）・英語表示・共有シートからの画像保存
+
 ## 未検証
-- 実機での指描画の書き味、Undo/Redo、全消去からの復元、長押しメニュー、共有（シミュレータで操作できる自動化ツールがなく、未操作）
+- 実機での書き味そのもの（XCUITest のドラッグは等速の直線で、筆圧も傾きも無い）
 - iOS 26 の画面全体スワイプで戻る操作が、キャンバス上で無効になっているか
 - iOS 18 での見た目全般（シミュレータに iOS 26.5 しか入っていない）
-- 英語に切り替えたとき、長押しメニュー・削除の確認・「…」メニューの文言も英語になるか
-- 動作確認は、起動引数 `-appLanguage en` で UserDefaults を上書きすると、画面を操作せずに英語表示を確認できる
+
+## App Store
+- メタデータ・スクショ・年齢制限は fastlane で管理（`fastlane/`）
+  - `bundle exec fastlane <lane> --env local`。Homebrew の Ruby を使う（`PATH=/opt/homebrew/opt/ruby/bin:$PATH`）
+  - `.env.local` は gitignore 済み。API キーは MyTapCount と同じものを使う
+- レーン: `upload_metadata`（テキスト＋年齢制限）/ `upload_screenshots` / `prepare_submission`（配信権・輸出コンプライアンス）/ `set_price_free`
+- スクショは `./fastlane/capture_screenshots.sh` で 1284x2778 が日英 5 枚ずつ。
+  見本メモは `-seedSampleData`（`SampleData.swift`、`#if DEBUG`）
+- バイナリのアップロードだけは Xcode の Organizer から手動
+
+### 注意
+- **deliver の `price_tier` は使えない。** Apple が価格 API を作り替えていて
+  `'prices' is not a relationship on the resource 'apps'` で落ちる。
+  `set_price_free` は新しい `appPriceSchedules` / `appPricePoints` を直に叩いている
+- 年齢制限の `ageAssurance` は API が必須にしている。無いと弾かれる
+- 配信権と輸出コンプライアンスは deliver の `submission_information` では
+  `submit_for_review: true` のときしか送られない。提出前に入れたいので `prepare_submission` で spaceship を直に叩く
+- 暗号化は使っていないので `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO` を入れてある。
+  以後アップロードするビルドでは輸出コンプライアンスを訊かれない
+- プライバシーポリシーは `docs/privacy-{ja,en}.md`。掲載先は https://kotoragk.com/myhandmemo/privacy

@@ -42,6 +42,73 @@ platform :ios do
     )
   end
 
+  # 提出前に App Store Connect 側で埋めておく項目。
+  # deliver の submission_information は submit_for_review のときしか走らないので、
+  # まだ提出したくない段階では spaceship を直に叩く。
+  lane :prepare_submission do
+    Spaceship::ConnectAPI.token = Spaceship::ConnectAPI::Token.create(**api_key)
+    app = Spaceship::ConnectAPI::App.find(APP_BUNDLE_ID)
+    UI.user_error!("App が見つからない: #{APP_BUNDLE_ID}") if app.nil?
+
+    # コンテンツの配信権。第三者のコンテンツは一切使っていない
+    app.update(attributes: {
+      contentRightsDeclaration:
+        Spaceship::ConnectAPI::App::ContentRightsDeclaration::DOES_NOT_USE_THIRD_PARTY_CONTENT,
+    })
+    UI.success("コンテンツの配信権を設定した（第三者のコンテンツなし）")
+
+    # 輸出コンプライアンス。通信も暗号化も使っていない。
+    # 今後のビルドは ITSAppUsesNonExemptEncryption=NO を持つので訊かれない。
+    builds = Spaceship::ConnectAPI::Build.all(app_id: app.id, limit: 10)
+    if builds.empty?
+      UI.important("ビルドがまだ無いので輸出コンプライアンスは飛ばす")
+    else
+      builds.each do |build|
+        next unless build.uses_non_exempt_encryption.nil?
+        build.update(attributes: { usesNonExemptEncryption: false })
+        UI.success("輸出コンプライアンスを設定した（ビルド #{build.version}）")
+      end
+    end
+  end
+
+  # 価格を無料（日本基準・0円）にする。
+  #
+  # deliver の price_tier は使えない。Apple が価格の API を作り替えていて、
+  #   'prices' is not a relationship on the resource 'apps'
+  #   'availableInNewTerritories' is not an attribute on the resource 'apps'
+  # で落ちる。新しい appPriceSchedules / appPricePoints を直に叩く。
+  lane :set_price_free do
+    Spaceship::ConnectAPI.token = Spaceship::ConnectAPI::Token.create(**api_key)
+    app = Spaceship::ConnectAPI::App.find(APP_BUNDLE_ID)
+    UI.user_error!("App が見つからない: #{APP_BUNDLE_ID}") if app.nil?
+    client = Spaceship::ConnectAPI.tunes_request_client
+
+    points = client.get("v1/apps/#{app.id}/appPricePoints",
+                        { "filter[territory]" => "JPN", "limit" => 200 }).body["data"]
+    free = points.find { |d| d.dig("attributes", "customerPrice").to_f == 0.0 }
+    UI.user_error!("無料の価格ポイントが見つからない") if free.nil?
+
+    client.post("v1/appPriceSchedules", {
+      data: {
+        type: "appPriceSchedules",
+        relationships: {
+          app: { data: { type: "apps", id: app.id } },
+          baseTerritory: { data: { type: "territories", id: "JPN" } },
+          manualPrices: { data: [{ type: "appPrices", id: "${price}" }] },
+        },
+      },
+      included: [{
+        id: "${price}",
+        type: "appPrices",
+        attributes: { startDate: nil, endDate: nil },
+        relationships: {
+          appPricePoint: { data: { type: "appPricePoints", id: free["id"] } },
+        },
+      }],
+    })
+    UI.success("価格を無料にした（基準地域 JPN・0円）")
+  end
+
   # スクリーンショットのみアップロード。撮影は fastlane/capture_screenshots.sh。
   lane :upload_screenshots do
     upload_to_app_store(

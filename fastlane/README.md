@@ -23,6 +23,22 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 
 
+### ios prepare_submission
+
+```sh
+[bundle exec] fastlane ios prepare_submission
+```
+
+
+
+### ios set_price_free
+
+```sh
+[bundle exec] fastlane ios set_price_free
+```
+
+
+
 ### ios upload_screenshots
 
 ```sh
