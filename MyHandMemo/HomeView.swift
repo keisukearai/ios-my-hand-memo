@@ -47,6 +47,9 @@ struct HomeView: View {
             .background(Theme.background.ignoresSafeArea())
             .overlay(alignment: .bottomTrailing) { newNoteButton }
             // タイトルはナビバー内に左寄せで出す。標準タイトルは表示だけ消し、戻るボタンの文言用に残す。
+            #if DEBUG
+            .task { SampleData.seedIfRequested(into: context) }
+            #endif
             .navigationTitle("Handwritten Notes")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar(removing: .title)
