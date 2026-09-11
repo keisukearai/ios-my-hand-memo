@@ -1,0 +1,27 @@
+MyHandMemo is a handwritten notepad for scribbling down a thought with your finger before it gets away.
+
+No keyboard, no formatting — just write the way you would on paper. Tap the pencil and a blank sheet opens right away.
+
+KEY FEATURES
+
+Write with your finger
+Draw directly on the screen. Switch between pen, marker, and eraser, pick from four ink colors (black, blue, red, yellow), and choose one of three stroke widths.
+
+One screen, nothing more
+The canvas is fixed to a single screen. There is no scrolling, so you never lose track of what you wrote.
+
+Undo without worry
+Step back and forward one stroke at a time. Even after clearing the whole page, you have five seconds to take it back.
+
+Choose your paper
+Plain, ruled, or grid — set the paper you always use, along with your default ink color and stroke width.
+
+Find notes at a glance
+Notes are laid out as thumbnails. Pin the ones you reach for often to keep them at the top. Press and hold a note to duplicate it, share it as an image, or delete it.
+
+Japanese and English
+Choose the app's language from Match Device, Japanese, or English. It switches on the spot, without changing your device settings.
+
+PRIVACY
+
+The app has no networking at all. Your notes are stored only on your device and are never sent anywhere. There is no account to create, and no ads or analytics.

@@ -5,6 +5,9 @@
 ## 前提
 - iPhone のみ / iOS 18.0 以上 / 縦固定 / ライトモード固定
 - 未リリース（2026-09-11 時点）
+- バンドル ID は `com.keisukearai.MyHandMemo` で確定（2026-09-12）。App Store Connect で App を作ると変更できない
+  - Capability を一つも使っていないため Xcode の自動署名はワイルドカード App ID（`HFZSU3MJLR.*`）を使う。
+    App Store Connect のバンドル ID 一覧には明示的な App ID しか出ないので、開発者ポータルでの登録が別途必要
 - 言語: 英語（開発言語）＋日本語。文字列は `Localizable.xcstrings`（キーは英語）
 - ファイルは Xcode の自動同期グループ。追加・削除で pbxproj の編集は不要
 

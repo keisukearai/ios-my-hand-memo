@@ -3,3 +3,10 @@ xcuserdata/
 DerivedData/
 build/
 *.xcuserstate
+
+# fastlane
+fastlane/.env.local
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
+vendor/bundle/
