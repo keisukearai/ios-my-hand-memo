@@ -28,6 +28,8 @@ platform :ios do
       run_precheck_before_submit: false,
       force: true,
       copyright: "#{Time.now.year} Keisuke Arai",
+      # 年齢制限の質問票。中身は fastlane/metadata/app_store_rating_config.json
+      app_rating_config_path: "fastlane/metadata/app_store_rating_config.json",
       app_review_information: {
         first_name: "Keisuke",
         last_name: "Arai",
