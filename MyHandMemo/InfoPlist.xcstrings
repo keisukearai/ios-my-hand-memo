@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "NSPhotoLibraryAddUsageDescription" : {
+      "comment" : "共有シートで「画像を保存」を選んだときに出る許可ダイアログの文言",
+      "extractionState" : "manual",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「画像を保存」を選ぶと、メモを画像として写真に保存します。"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
