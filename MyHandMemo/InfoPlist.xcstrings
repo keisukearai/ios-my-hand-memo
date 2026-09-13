@@ -17,6 +17,12 @@
       "comment" : "共有シートで「画像を保存」を選んだときに出る許可ダイアログの文言",
       "extractionState" : "manual",
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saves a note to your photo library when you choose Save Image."
+          }
+        },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",

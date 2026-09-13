@@ -64,4 +64,7 @@
   `submit_for_review: true` のときしか送られない。提出前に入れたいので `prepare_submission` で spaceship を直に叩く
 - 暗号化は使っていないので `INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = NO` を入れてある。
   以後アップロードするビルドでは輸出コンプライアンスを訊かれない
+- **`InfoPlist.xcstrings` のキーには `en` の訳も必ず入れる。** 無いと en.lproj/InfoPlist.strings に
+  キー名がそのまま値として入り、pbxproj の `INFOPLIST_KEY_...` を上書きする。
+  1.0 (1) は `NSPhotoLibraryAddUsageDescription` がプレースホルダー扱いで審査に通らなかった（2026-09-14）
 - プライバシーポリシーは `docs/privacy-{ja,en}.md`。掲載先は https://kotoragk.com/myhandmemo/privacy
